@@ -4,7 +4,7 @@ ns respo-value.style.widget $ :require
 
 def literal $ {} (:line-height |16px)
   :border-radius |4px
-  :padding "|0 8px"
+  :padding "|0px 8px"
   :color $ hsl 0 0 100
   :font-family "|Source Code Pro, menlo, monospace"
   :font-size |12px
@@ -12,3 +12,6 @@ def literal $ {} (:line-height |16px)
   :margin "|0px 4px"
   :box-shadow $ str "|0 0 1px "
     hsl 0 0 0 0.3
+  :vertical-align |top
+
+def only-text $ {} (:pointer-events |none)

@@ -9,6 +9,7 @@ def style-section $ {} (:display |flex)
   :padding "|8px 8px"
 
 def style-hint $ {} (:width |240px)
+  :color $ hsl 0 0 50
 
 def style-value $ {}
 

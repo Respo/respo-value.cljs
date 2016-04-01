@@ -5,7 +5,7 @@ ns respo-value.component.value $ :require
 
 defn style-number ()
   merge widget/literal $ {}
-    :background-color $ hsl 240 80 50
+    :background-color $ hsl 240 80 60
 
 defn style-nil ()
   merge widget/literal $ {}
@@ -29,6 +29,7 @@ defn style-vector ()
 
 def style-char $ {}
   :color $ hsl 0 80 30
+  :pointer-events |none
 
 defn style-list ()
   merge widget/literal $ {}
@@ -40,7 +41,7 @@ defn style-map ()
 
 defn style-set ()
   merge widget/literal $ {}
-    :background-color $ hsl 230 50 60
+    :background-color $ hsl 230 50 70
 
 defn style-function ()
   merge widget/literal $ {}
@@ -107,65 +108,108 @@ def bool-component $ {} (:name :bool)
       [] :span $ {} (:style $ style-bool)
         :inner-text $ str x
 
+defn toggle-folding (simple-event dispatch mutate)
+  mutate
+
 def vector-component $ {} (:name :vector)
-  :update-state merge
+  :update-state not
   :get-state $ fn (x)
-    {}
+    , true
   :render $ fn (x)
-    fn (state)
-      [] :div
-        {} $ :style (style-vector)
-        [] :span $ {} (:inner-text |[)
-          :style style-char
-        render-children x
-        [] :span $ {} (:inner-text |])
-          :style style-char
+    fn (folded?)
+      if folded?
+        [] :div
+          {} (:style $ style-vector)
+            :on-dblclick toggle-folding
+          [] :span $ {}
+            :inner-text $ str |Vector: (count x)
+            :style widget/only-text
+
+        [] :div
+          {} (:style $ style-vector)
+            :on-dblclick toggle-folding
+          [] :span $ {} (:inner-text |[)
+            :style style-char
+          [] :span $ {} (:inner-text |])
+            :style style-char
+          render-children x
 
 def set-component $ {} (:name :set)
-  :update-state merge
+  :update-state not
   :get-state $ fn (x)
-    {}
+    , true
   :render $ fn (x)
-    fn (state)
-      [] :div
-        {} $ :style (style-set)
-        [] :span $ {} (:inner-text |#{)
-          :style style-char
-        render-children x
-        [] :span $ {} (:inner-text |})
-          :style style-char
+    fn (folded?)
+      if folded?
+        [] :div
+          {} (:style $ style-set)
+            :on-dblclick toggle-folding
+          [] :span $ {}
+            :inner-text $ str |Set: (count x)
+            :style widget/only-text
+
+        [] :div
+          {} (:style $ style-set)
+            :on-dblclick toggle-folding
+          [] :span $ {} (:inner-text |#{)
+            :style style-char
+          [] :span $ {} (:inner-text |})
+            :style style-char
+          render-children x
 
 def list-component $ {} (:name :list)
-  :update-state merge
+  :update-state not
   :get-state $ fn (x)
-    {}
+    , true
   :render $ fn (x)
-    fn (state)
-      [] :div
-        {} $ :style (style-list)
-        [] :span $ {} (:style style-char)
-          :inner-text "|'("
-        render-children x
-        [] :span $ {} (:style style-char)
-          :inner-text "|)"
+    fn (folded?)
+      if (not folded?)
+        [] :div
+          {} (:style $ style-list)
+            :on-dblclick toggle-folding
+          [] :span $ {} (:style style-char)
+            :inner-text "|'("
+          [] :span $ {} (:style style-char)
+            :inner-text "|)"
+          render-children x
+
+        [] :div
+          {} (:style $ style-list)
+            :on-dblclick toggle-folding
+          [] :span $ {}
+            :inner-text $ str |List: (count x)
+            :style widget/only-text
 
 def map-component $ {} (:name :map)
-  :update-state merge
+  :update-state not
   :get-state $ fn (x)
-    {}
+    , true
   :render $ fn (x)
-    fn (state)
-      [] :div
-        {} $ :style (style-map)
-        [] :span $ {} (:style style-char)
-          :inner-text |{
-        render-children $ ->> x (map identity)
-          apply concat
-        [] :span $ {} (:style style-char)
-          :inner-text |}
+    fn (folded?)
+      if folded?
+        [] :div
+          {} (:style $ style-map)
+            :on-dblclick toggle-folding
+          [] :span $ {} (:style widget/only-text)
+            :inner-text $ str |Map: (count x)
+
+        [] :div
+          {} (:style $ style-map)
+            :on-dblclick toggle-folding
+          [] :span $ {} (:style style-char)
+            :inner-text |{
+          [] :span $ {} (:style style-char)
+            :inner-text |}
+          render-children $ ->> x (map identity)
+            apply concat
+
+def style-children $ {} (:display |inline-block)
+  :vertical-align |top
+  :padding "|4px 4px"
 
 defn render-children (xs)
-  [] :div ({})
+  [] :div
+    {} $ :style style-children
     ->> xs
       map-indexed $ fn (index child)
         [] index $ render-value child
