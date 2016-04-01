@@ -5,16 +5,16 @@
  :resource-paths #{"src"}
 
  :dev-dependencies '[]
- :dependencies '[[adzerk/boot-cljs          "1.7.170-3"   :scope "provided"]
-                 [adzerk/boot-reload        "0.4.6"       :scope "provided"]
-                 [mvc-works/boot-html-entry "0.1.1"       :scope "provided"]
-                 [cirru/boot-cirru-sepal    "0.1.1"       :scope "provided"]
-                 [org.clojure/clojure       "1.8.0"       :scope "test"]
+ :dependencies '[[org.clojure/clojure       "1.8.0"       :scope "provided"]
+                 [adzerk/boot-cljs          "1.7.170-3"   :scope "test"]
+                 [adzerk/boot-reload        "0.4.6"       :scope "test"]
+                 [mvc-works/boot-html-entry "0.1.1"       :scope "test"]
+                 [cirru/boot-cirru-sepal    "0.1.1"       :scope "test"]
                  [org.clojure/clojurescript "1.8.40"      :scope "test"]
                  [binaryage/devtools        "0.5.2"       :scope "test"]
-                 [mvc-works/hsl             "0.1.2"]
-                 [mvc-works/respo           "0.1.9"]
-                 [mvc-works/respo-client    "0.1.9"]])
+                 [mvc-works/respo           "0.1.9"       :scope "test"]
+                 [mvc-works/respo-client    "0.1.9"       :scope "test"]
+                 [mvc-works/hsl             "0.1.2"]])
 
 (require '[adzerk.boot-cljs :refer [cljs]]
          '[adzerk.boot-reload :refer [reload]]
