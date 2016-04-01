@@ -21,7 +21,7 @@
          '[html-entry.core :refer [html-entry]]
          '[cirru-sepal.core :refer [cirru-sepal]])
 
-(def +version+ "0.1.0")
+(def +version+ "0.1.1")
 
 (task-options!
   pom {:project     'mvc-works/respo-value
@@ -54,7 +54,7 @@
 (deftask dev []
   (comp
     (html-entry :dsl (html-dsl {:env :dev}) :html-name "index.html")
-    (cirru-sepal :paths ["cirru-src"])
+    (compile-cirru)
     (cirru-sepal :paths ["cirru-src"] :watch true)
     (watch)
     (reload :on-jsload 'respo-value.core/on-jsload)
@@ -62,11 +62,13 @@
 
 (deftask build-simple []
   (comp
+    (compile-cirru)
     (cljs)
     (html-entry :dsl (html-dsl {:env :dev}) :html-name "index.html")))
 
 (deftask build-advanced []
   (comp
+    (compile-cirru)
     (cljs :optimizations :advanced)
     (html-entry :dsl (html-dsl {:env :build}) :html-name "index.html")))
 
@@ -83,12 +85,12 @@
 
 (deftask build []
   (comp
+   (compile-cirru)
    (pom)
    (jar)
    (install)))
 
 (deftask deploy []
   (comp
-   (compile-cirru)
    (build)
    (push :repo "clojars" :gpg-sign (not (.endsWith +version+ "-SNAPSHOT")))))
