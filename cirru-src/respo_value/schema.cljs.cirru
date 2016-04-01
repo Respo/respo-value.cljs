@@ -6,6 +6,8 @@ def a-number 1
 
 def a-string "|a string"
 
+def a-keyword :kywd
+
 def a-bool true
 
 def a-vector $ [] 1 2 3
