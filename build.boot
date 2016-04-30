@@ -9,11 +9,11 @@
                  [adzerk/boot-cljs          "1.7.170-3"   :scope "test"]
                  [adzerk/boot-reload        "0.4.6"       :scope "test"]
                  [mvc-works/boot-html-entry "0.1.1"       :scope "test"]
-                 [cirru/boot-cirru-sepal    "0.1.1"       :scope "test"]
+                 [cirru/boot-cirru-sepal    "0.1.2"       :scope "test"]
                  [org.clojure/clojurescript "1.8.40"      :scope "test"]
                  [binaryage/devtools        "0.5.2"       :scope "test"]
-                 [mvc-works/respo           "0.1.9"       :scope "test"]
-                 [mvc-works/respo-client    "0.1.9"       :scope "test"]
+                 [mvc-works/respo           "0.1.18"]
+                 [mvc-works/respo-client    "0.1.11"]
                  [mvc-works/hsl             "0.1.2"]])
 
 (require '[adzerk.boot-cljs :refer [cljs]]
@@ -21,7 +21,7 @@
          '[html-entry.core :refer [html-entry]]
          '[cirru-sepal.core :refer [cirru-sepal]])
 
-(def +version+ "0.1.1")
+(def +version+ "0.1.2")
 
 (task-options!
   pom {:project     'mvc-works/respo-value
@@ -58,19 +58,22 @@
     (cirru-sepal :paths ["cirru-src"] :watch true)
     (watch)
     (reload :on-jsload 'respo-value.core/on-jsload)
-    (cljs)))
+    (cljs)
+    (target)))
 
 (deftask build-simple []
   (comp
     (compile-cirru)
     (cljs)
-    (html-entry :dsl (html-dsl {:env :dev}) :html-name "index.html")))
+    (html-entry :dsl (html-dsl {:env :dev}) :html-name "index.html")
+    (target)))
 
 (deftask build-advanced []
   (comp
     (compile-cirru)
     (cljs :optimizations :advanced)
-    (html-entry :dsl (html-dsl {:env :build}) :html-name "index.html")))
+    (html-entry :dsl (html-dsl {:env :build}) :html-name "index.html")
+    (target)))
 
 (deftask rsync []
   (fn [next-task]
@@ -88,7 +91,8 @@
    (compile-cirru)
    (pom)
    (jar)
-   (install)))
+   (install)
+   (target)))
 
 (deftask deploy []
   (comp

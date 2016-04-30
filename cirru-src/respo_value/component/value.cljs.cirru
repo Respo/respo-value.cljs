@@ -2,6 +2,7 @@
 ns respo-value.component.value $ :require
   [] hsl.core :refer $ [] hsl
   [] respo-value.style.widget :as widget
+  [] respo.alias :refer $ [] create-comp div span
 
 defn style-number ()
   merge widget/literal $ {}
@@ -58,152 +59,151 @@ declare render-value
 
 declare render-children
 
-def nil-component $ {} (:name :number)
-  :update-state merge
-  :get-state $ fn ()
-    {}
-  :render $ fn ()
-    fn (state)
-      [] :span $ {} (:style $ style-nil)
-        :inner-text |nil
+def nil-component $ create-comp :number
+  fn ()
+    fn (state mutate)
+      span $ {} (:style $ style-nil)
+        :attrs $ {} :inner-text |nil
 
-def function-component $ {} (:name :function)
-  :update-state merge
-  :get-state $ fn ()
-    {}
-  :render $ fn ()
-    fn (state)
-      [] :span $ {} (:style $ style-function)
-        :inner-text |fn
+def function-component $ create-comp :function
+  fn ()
+    fn (state mutate)
+      span $ {} (:style $ style-function)
+        :attrs $ {} :inner-text |fn
 
-def number-component $ {} (:name :number)
-  :update-state merge
-  :get-state $ fn (x)
-    {}
-  :render $ fn (x)
-    fn (state)
-      [] :span $ {} (:style $ style-number)
-        :inner-text $ str x
+def number-component $ create-comp :number
+  fn (x)
+    fn (state mutate)
+      span $ {} (:style $ style-number)
+        :attrs $ {} :inner-text (str x)
 
-def string-component $ {} (:name :string)
-  :update-state merge
-  :get-state $ fn (x)
-    {}
-  :render $ fn (x)
-    fn (state)
-      [] :span $ {} (:style $ style-string)
-        :inner-text $ pr-str x
+def string-component $ create-comp :string
+  fn (x)
+    fn (state mutate)
+      span $ {} (:style $ style-string)
+        :attrs $ {} :inner-text (pr-str x)
 
-def keyword-component $ {} (:name :keyword)
-  :update-state merge
-  :get-state $ fn (x)
-    {}
-  :render $ fn (x)
-    fn (state)
-      [] :span $ {} (:style $ style-keyword)
-        :inner-text $ str x
+def keyword-component $ create-comp :keyword
+  fn (x)
+    fn (state mutate)
+      span $ {} (:style $ style-keyword)
+        :attrs $ {} :inner-text (str x)
 
-def bool-component $ {} (:name :bool)
-  :update-state merge
-  :get-state $ fn (x)
-    {}
-  :render $ fn (x)
-    fn (state)
-      [] :span $ {} (:style $ style-bool)
-        :inner-text $ str x
+def bool-component $ create-comp :bool
+  fn (x)
+    fn (state mutate)
+      span $ {} (:style $ style-bool)
+        :attrs $ {} :inner-text (str x)
 
-defn toggle-folding (simple-event dispatch mutate)
-  mutate
+defn toggle-folding (mutate)
+  fn (simple-event dispatch)
+    mutate
 
-def vector-component $ {} (:name :vector)
-  :update-state not
-  :get-state $ fn (x level)
+def vector-component $ create-comp :vector
+  fn (x level)
     > level 1
-  :render $ fn (x level)
-    fn (folded?)
+  , not
+  fn (x level)
+    fn (folded? mutate)
       if folded?
-        [] :div
+        div
           {} (:style $ style-vector)
-            :on-click toggle-folding
-          [] :span $ {}
-            :inner-text $ str |Vector: (count x)
+            :event $ {} :click (toggle-folding mutate)
+
+          span $ {}
+            :attrs $ {} :inner-text
+              str |Vector: $ count x
             :style widget/only-text
 
-        [] :div
+        div
           {} (:style $ style-vector)
-            :on-click toggle-folding
-          [] :span $ {} (:inner-text |[)
+            :event $ {} :click (toggle-folding mutate)
+
+          span $ {}
+            :attrs $ {} :inner-text |[
             :style style-char
-          [] :span $ {} (:inner-text |])
+          span $ {}
+            :attrs $ {} :inner-text |]
             :style style-char
           render-children x level
 
-def set-component $ {} (:name :set)
-  :update-state not
-  :get-state $ fn (x level)
+def set-component $ create-comp :set
+  fn (x level)
     > level 1
-  :render $ fn (x level)
-    fn (folded?)
+  , not
+  fn (x level)
+    fn (folded? mutate)
       if folded?
-        [] :div
+        div
           {} (:style $ style-set)
-            :on-click toggle-folding
-          [] :span $ {}
-            :inner-text $ str |Set: (count x)
+            :event $ {} :click (toggle-folding mutate)
+
+          span $ {}
+            :attrs $ {} :inner-text
+              str |Set: $ count x
             :style widget/only-text
 
-        [] :div
+        div
           {} (:style $ style-set)
-            :on-click toggle-folding
-          [] :span $ {} (:inner-text |#{)
+            :event $ {} :click (toggle-folding mutate)
+
+          span $ {}
+            :attrs $ {} :inner-text |#{
             :style style-char
-          [] :span $ {} (:inner-text |})
+          span $ {}
+            :attrs $ {} :inner-text |}
             :style style-char
           render-children x level
 
-def list-component $ {} (:name :list)
-  :update-state not
-  :get-state $ fn (x level)
+def list-component $ create-comp :list
+  fn (x level)
     > level 1
-  :render $ fn (x level)
-    fn (folded?)
+  , not
+  fn (x level)
+    fn (folded? mutate)
       if (not folded?)
-        [] :div
+        div
           {} (:style $ style-list)
-            :on-click toggle-folding
-          [] :span $ {} (:style style-char)
-            :inner-text "|'("
-          [] :span $ {} (:style style-char)
-            :inner-text "|)"
+            :event $ {} :click (toggle-folding mutate)
+
+          span $ {} (:style style-char)
+            :attrs $ {} :inner-text "|'("
+          span $ {} (:style style-char)
+            :attrs $ {} :inner-text "|)"
           render-children x level
 
-        [] :div
+        div
           {} (:style $ style-list)
-            :on-click toggle-folding
-          [] :span $ {}
-            :inner-text $ str |List: (count x)
+            :event $ {} :click (toggle-folding mutate)
+
+          span $ {}
+            :attrs $ {} :inner-text
+              str |List: $ count x
             :style widget/only-text
 
-def map-component $ {} (:name :map)
-  :update-state not
-  :get-state $ fn (x level)
+def map-component $ create-comp :map
+  fn (x level)
     > level 1
-  :render $ fn (x level)
-    fn (folded?)
+  , not
+  fn (x level)
+    fn (folded? mutate)
       if folded?
-        [] :div
+        div
           {} (:style $ style-map)
-            :on-click toggle-folding
-          [] :span $ {} (:style widget/only-text)
-            :inner-text $ str |Map: (count x)
+            :event $ {} :click (toggle-folding mutate)
 
-        [] :div
+          span $ {} (:style widget/only-text)
+            :attrs $ {} :inner-text
+              str |Map: $ count x
+
+        div
           {} (:style $ style-map)
-            :on-click toggle-folding
-          [] :span $ {} (:style style-char)
-            :inner-text |{
-          [] :span $ {} (:style style-char)
-            :inner-text |}
+            :event $ {} :click (toggle-folding mutate)
+
+          span $ {} (:style style-char)
+            :attrs $ {} :inner-text |{
+          span $ {} (:style style-char)
+            :attrs $ {} :inner-text |}
           render-children
             ->> x (map identity)
               apply concat
@@ -214,7 +214,7 @@ def style-children $ {} (:display |inline-block)
   :padding "|4px 4px"
 
 defn render-children (xs level)
-  [] :div
+  div
     {} $ :style style-children
     ->> xs
       map-indexed $ fn (index child)
@@ -226,21 +226,17 @@ defn render-value
   (x) (render-value x 0)
   (x level)
     cond
-      (nil? x) ([] nil-component)
-      (number? x) ([] number-component x)
-      (string? x) ([] string-component x)
-      (keyword? x) ([] keyword-component x)
-      (fn? x) ([] function-component x)
-      (or (= x true) (= x false)) ([] bool-component x)
+      (nil? x) (nil-component)
+      (number? x) (number-component x)
+      (string? x) (string-component x)
+      (keyword? x) (keyword-component x)
+      (fn? x) (function-component x)
+      (or (= x true) (= x false)) (bool-component x)
 
-      (vector? x)
-        [] vector-component x level
-      (set? x)
-        [] set-component x level
-      (list? x)
-        [] list-component x level
-      (map? x)
-        [] map-component x level
-      :else $ [] :div
+      (vector? x) (vector-component x level)
+      (set? x) (set-component x level)
+      (list? x) (list-component x level)
+      (map? x) (map-component x level)
+      :else $ div
         {} (:style style-unknown)
-          :inner-text |unknown
+          :attrs $ {} :inner-text |unknown
