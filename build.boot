@@ -1,100 +1,134 @@
 
 (set-env!
- :asset-paths #{"assets"}
- :source-paths #{}
- :resource-paths #{"src"}
-
- :dev-dependencies '[]
- :dependencies '[[org.clojure/clojure       "1.8.0"       :scope "provided"]
-                 [adzerk/boot-cljs          "1.7.170-3"   :scope "test"]
-                 [adzerk/boot-reload        "0.4.6"       :scope "test"]
-                 [mvc-works/boot-html-entry "0.1.1"       :scope "test"]
-                 [cirru/boot-cirru-sepal    "0.1.2"       :scope "test"]
-                 [org.clojure/clojurescript "1.8.40"      :scope "test"]
-                 [binaryage/devtools        "0.5.2"       :scope "test"]
-                 [mvc-works/respo           "0.1.18"]
-                 [mvc-works/respo-client    "0.1.11"]
+ :dependencies '[[org.clojure/clojure       "1.8.0"       :scope "test"]
+                 [org.clojure/clojurescript "1.9.89"      :scope "test"]
+                 [adzerk/boot-cljs          "1.7.228-1"   :scope "test"]
+                 [adzerk/boot-reload        "0.4.11"      :scope "test"]
+                 [cirru/boot-cirru-sepal    "0.1.9"       :scope "test"]
+                 [binaryage/devtools        "0.7.2"       :scope "test"]
+                 [adzerk/boot-test          "1.1.1"       :scope "test"]
+                 [mvc-works/respo           "0.3.6"]
                  [mvc-works/hsl             "0.1.2"]])
 
-(require '[adzerk.boot-cljs :refer [cljs]]
+(require '[adzerk.boot-cljs   :refer [cljs]]
          '[adzerk.boot-reload :refer [reload]]
-         '[html-entry.core :refer [html-entry]]
-         '[cirru-sepal.core :refer [cirru-sepal]])
+         '[cirru-sepal.core   :refer [transform-cirru]]
+         '[respo.alias        :refer [html head title script style meta' div link body]]
+         '[respo.render.static-html :refer [make-html]]
+         '[adzerk.boot-test   :refer :all]
+         '[clojure.java.io    :as    io])
 
 (def +version+ "0.1.2")
 
 (task-options!
   pom {:project     'mvc-works/respo-value
        :version     +version+
-       :description "Workflow"
+       :description "Respo value component"
        :url         "https://github.com/mvc-works/respo-value"
        :scm         {:url "https://github.com/mvc-works/respo-value"}
        :license     {"MIT" "http://opensource.org/licenses/mit-license.php"}})
 
-(set-env! :repositories #(conj % ["clojars" {:url "https://clojars.org/repo/"}]))
-
-(defn html-dsl [data]
-  [:html
-   [:head
-    [:title "Respo value"]
-    [:link
-     {:rel "stylesheet", :type "text/css", :href "style.css"}]
-    [:link
-     {:rel "icon", :type "image/png", :href "respo.png"}]
-    [:style nil "body {margin: 0;}"]
-    [:style
-     nil
-     "body * {box-sizing: border-box; }"]]
-    [:script {:id "config" :type "text/edn"} (pr-str data)]
-   [:body [:div#app] [:script {:src "main.js"}]]])
-
 (deftask compile-cirru []
-  (cirru-sepal :paths ["cirru-src"]))
+  (set-env!
+    :source-paths #{"cirru/"})
+  (comp
+    (transform-cirru)
+    (target :dir #{"compiled/"})))
+
+(defn use-text [x] {:attrs {:innerHTML x}})
+(defn html-dsl [data fileset]
+  (make-html
+    (html {}
+    (head {}
+      (title (use-text "Respo value"))
+      (link {:attrs {:rel "icon" :type "image/png" :href "mvc-works-192x192.png"}})
+      (if (:build? data)
+        (link (:attrs {:rel "manifest" :href "manifest.json"})))
+      (meta'{:attrs {:charset "utf-8"}})
+      (meta' {:attrs {:name "viewport" :content "width=device-width, initial-scale=1"}})
+      (style (use-text "body {margin: 0;}"))
+      (style (use-text "body * {box-sizing: border-box;}"))
+      (script {:attrs {:id "config" :type "text/edn" :innerHTML (pr-str data)}}))
+    (body {}
+      (div {:attrs {:id "app"}})
+      (script {:attrs {:src "main.js"}})))))
+
+(deftask html-file
+  "task to generate HTML file"
+  [d data VAL edn "data piece for rendering"]
+  (with-pre-wrap fileset
+    (let [tmp (tmp-dir!)
+          out (io/file tmp "index.html")]
+      (empty-dir! tmp)
+      (spit out (html-dsl data fileset))
+      (-> fileset
+        (add-resource tmp)
+        (commit!)))))
 
 (deftask dev []
+  (set-env!
+    :asset-paths #{"assets"}
+    :source-paths #{"cirru/src"})
   (comp
-    (html-entry :dsl (html-dsl {:env :dev}) :html-name "index.html")
-    (compile-cirru)
-    (cirru-sepal :paths ["cirru-src"] :watch true)
+    (html-file :data {:build? false})
     (watch)
-    (reload :on-jsload 'respo-value.core/on-jsload)
+    (transform-cirru)
+    (reload :on-jsload 'respo-value.core/on-jsload
+            :cljs-asset-path ".")
     (cljs)
     (target)))
 
 (deftask build-simple []
+  (set-env!
+    :asset-paths #{"assets"}
+    :source-paths #{"cirru/src"})
   (comp
-    (compile-cirru)
-    (cljs)
-    (html-entry :dsl (html-dsl {:env :dev}) :html-name "index.html")
+    (transform-cirru)
+    (cljs :optimizations :simple)
+    (html-file :data {:build? false})
     (target)))
 
 (deftask build-advanced []
+  (set-env!
+    :asset-paths #{"assets"}
+    :source-paths #{"cirru/src"})
   (comp
-    (compile-cirru)
+    (transform-cirru)
     (cljs :optimizations :advanced)
-    (html-entry :dsl (html-dsl {:env :build}) :html-name "index.html")
+    (html-file :data {:build? true})
     (target)))
 
 (deftask rsync []
-  (fn [next-task]
-    (fn [fileset]
-      (sh "rsync" "-r" "target/" "tiye:repo/mvc-works/respo-value" "--exclude" "main.out" "--delete")
-      (next-task fileset))))
+  (with-pre-wrap fileset
+    (sh "rsync" "-r" "target/" "tiye:repo/mvc-works/respo-value" "--exclude" "main.out" "--delete")
+    fileset))
 
 (deftask send-tiye []
   (comp
-    (build-advanced)
+    (build-simple)
     (rsync)))
 
 (deftask build []
+  (set-env!
+    :source-paths #{"cirru/src"})
   (comp
-   (compile-cirru)
-   (pom)
-   (jar)
-   (install)
-   (target)))
+    (transform-cirru)
+    (pom)
+    (jar)
+    (install)
+    (target)))
 
 (deftask deploy []
+  (set-env!
+    :repositories #(conj % ["clojars" {:url "https://clojars.org/repo/"}]))
   (comp
-   (build)
-   (push :repo "clojars" :gpg-sign (not (.endsWith +version+ "-SNAPSHOT")))))
+    (build)
+    (push :repo "clojars" :gpg-sign (not (.endsWith +version+ "-SNAPSHOT")))))
+
+(deftask watch-test []
+  (set-env!
+    :source-paths #{"cirru/src" "cirru/test"})
+  (comp
+    (watch)
+    (transform-cirru)
+    (test :namespaces '#{boot-workflow.test})))
