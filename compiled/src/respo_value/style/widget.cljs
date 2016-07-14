@@ -5,44 +5,34 @@
 (def literal
  {:line-height "16px",
   :box-shadow (str "0 0 1px " (hsl 0 0 0 0.3)),
-  :color (hsl 0 0 100),
+  :color (hsl 0 0 30),
   :vertical-align "top",
   :font-size "12px",
-  :padding "0px 8px",
+  :padding "0px 4px",
   :display "inline-block",
   :border-radius "4px",
   :font-family "Source Code Pro, menlo, monospace",
-  :margin "0px 4px"})
+  :margin "4px"})
+
+(def structure
+ {:line-height "16px",
+  :box-shadow (str "0 0 1px " (hsl 0 0 0 0.3)),
+  :color (hsl 0 0 40),
+  :vertical-align "top",
+  :font-size "12px",
+  :cursor "pointer",
+  :padding "0px 2px",
+  :display "inline-block",
+  :border-radius "4px",
+  :font-family "Source Code Pro, menlo, monospace",
+  :margin "4px"})
 
 (def only-text {:pointer-events "none"})
-
-(def style-number (merge literal {:background-color (hsl 240 80 60)}))
-
-(def style-nil (merge literal {:background-color (hsl 240 80 0)}))
-
-(def style-string (merge literal {:background-color (hsl 140 80 40)}))
-
-(def style-keyword (merge literal {:background-color (hsl 200 60 80)}))
-
-(def style-bool (merge literal {:background (hsl 140 80 50)}))
-
-(def style-vector
- (merge literal {:background-color (hsl 0 20 80), :cursor "pointer"}))
-
-(def style-char {:color (hsl 0 80 30), :pointer-events "none"})
-
-(def style-list
- (merge literal {:background-color (hsl 120 80 70), :cursor "pointer"}))
-
-(def style-map
- (merge literal {:background-color (hsl 230 50 80), :cursor "pointer"}))
-
-(def style-set
- (merge literal {:background-color (hsl 230 50 70), :cursor "pointer"}))
-
-(def style-function (merge literal {:background-color (hsl 30 50 80)}))
 
 (def style-unknown {})
 
 (def style-children
- {:vertical-align "top", :padding "4px 4px", :display "inline-block"})
+ {:vertical-align "top", :padding "0px", :display "inline-block"})
+
+(def style-hint
+ {:color (hsl 0 0 50), :font-size "14px", :width "240px"})
