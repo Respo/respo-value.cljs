@@ -3,6 +3,7 @@
   (:require [hsl.core :refer [hsl]]
             [respo-value.component.value :refer [render-value]]
             [respo-value.schema :as schema]
+            [respo.component.space :refer [comp-space]]
             [respo.alias :refer [create-comp div span]]
             [respo-value.style.layout :as layout]
             [respo-value.style.widget :as widget]))
@@ -31,7 +32,9 @@
   ["a nested vector:" schema/a-nested-vector]
   ["a hash-map:" schema/a-hash-map]
   ["a nested hash-map:" schema/a-nested-hash-map]
-  ["a mixed data:" schema/a-mixed-data]])
+  ["a mixed data:" schema/a-mixed-data]
+  ["an element"
+   (div {} (div {:style style-section}) (comp-space 8 nil))]])
 
 (defn render [store]
   (fn [state mutate]

@@ -52,7 +52,7 @@
    not
    (fn [x level]
      (fn [folded? mutate!]
-       (if folded?
+       (if (and folded? (not (empty? x)))
          (div
            {:style (merge widget/structure decoration/folded),
             :event {:click (toggle-folding mutate!)}}
@@ -70,7 +70,7 @@
    not
    (fn [x level]
      (fn [folded? mutate!]
-       (if folded?
+       (if (and folded? (not (empty? x)))
          (div
            {:style (merge widget/structure decoration/folded),
             :event {:click (toggle-folding mutate!)}}
@@ -88,7 +88,7 @@
    not
    (fn [x level]
      (fn [folded? mutate!]
-       (if folded?
+       (if (and folded? (not (empty? x)))
          (div
            {:style (merge widget/structure decoration/folded),
             :event {:click (toggle-folding mutate!)}}
@@ -106,7 +106,7 @@
    not
    (fn [x level]
      (fn [folded? mutate!]
-       (if folded?
+       (if (and folded? (not (empty? x)))
          (div
            {:style (merge widget/structure decoration/folded),
             :event {:click (toggle-folding mutate!)}}
