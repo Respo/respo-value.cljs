@@ -48,7 +48,7 @@
 (def comp-vector
  (create-comp
    :vector
-   (fn [x level] (> level 1))
+   (fn [x level] (>= level 1))
    not
    (fn [x level]
      (fn [folded? mutate!]
@@ -66,7 +66,7 @@
 (def comp-set
  (create-comp
    :set
-   (fn [x level] (> level 1))
+   (fn [x level] (>= level 1))
    not
    (fn [x level]
      (fn [folded? mutate!]
@@ -84,7 +84,7 @@
 (def comp-list
  (create-comp
    :list
-   (fn [x level] (> level 1))
+   (fn [x level] (>= level 1))
    not
    (fn [x level]
      (fn [folded? mutate!]
@@ -102,7 +102,7 @@
 (def comp-map
  (create-comp
    :map
-   (fn [x level] (> level 1))
+   (fn [x level] (>= level 1))
    not
    (fn [x level]
      (fn [folded? mutate!]

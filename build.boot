@@ -18,14 +18,14 @@
          '[adzerk.boot-test   :refer :all]
          '[clojure.java.io    :as    io])
 
-(def +version+ "0.1.4")
+(def +version+ "0.1.5")
 
 (task-options!
-  pom {:project     'mvc-works/respo-value
+  pom {:project     'respo/value
        :version     +version+
        :description "Respo value component"
-       :url         "https://github.com/mvc-works/respo-value"
-       :scm         {:url "https://github.com/mvc-works/respo-value"}
+       :url         "https://github.com/respo-mvc/respo-value"
+       :scm         {:url "https://github.com/respo-mvc/respo-value"}
        :license     {"MIT" "http://opensource.org/licenses/mit-license.php"}})
 
 (deftask compile-cirru []
@@ -100,7 +100,7 @@
 
 (deftask rsync []
   (with-pre-wrap fileset
-    (sh "rsync" "-r" "target/" "tiye.me:repo/mvc-works/respo-value" "--exclude" "main.out" "--delete")
+    (sh "rsync" "-r" "target/" "tiye.me:repo/respo-mvc/value" "--exclude" "main.out" "--delete")
     fileset))
 
 (deftask send-tiye []
