@@ -1,5 +1,5 @@
 
-(ns respo-value.component.value
+(ns respo-value.comp.value
   (:require [hsl.core :refer [hsl]]
             [respo-value.style.widget :as widget]
             [respo-value.style.layout :as layout]

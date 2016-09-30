@@ -2,7 +2,7 @@
 (ns respo-value.core
   (:require [hsl.core :refer [hsl]]
             [respo.core :refer [render! clear-cache!]]
-            [respo-value.component.container :refer [comp-container]]))
+            [respo-value.comp.container :refer [comp-container]]))
 
 (defn dispatch! [op op-data] (.log js/console "dispatch:" op op-data))
 

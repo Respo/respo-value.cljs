@@ -1,7 +1,7 @@
 
-(ns respo-value.component.container
+(ns respo-value.comp.container
   (:require [hsl.core :refer [hsl]]
-            [respo-value.component.value :refer [render-value]]
+            [respo-value.comp.value :refer [render-value]]
             [respo-value.schema :as schema]
             [respo.comp.space :refer [comp-space]]
             [respo.alias :refer [create-comp div span]]
