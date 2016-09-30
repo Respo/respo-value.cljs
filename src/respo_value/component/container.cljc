@@ -3,21 +3,13 @@
   (:require [hsl.core :refer [hsl]]
             [respo-value.component.value :refer [render-value]]
             [respo-value.schema :as schema]
-            [respo.component.space :refer [comp-space]]
+            [respo.comp.space :refer [comp-space]]
             [respo.alias :refer [create-comp div span]]
             [respo-value.style.layout :as layout]
             [respo-value.style.widget :as widget]))
 
 (def style-section
  {:padding "8px 8px", :display "flex", :font-family "Verdana"})
-
-(def style-value {})
-
-(defn render-section [hint value]
-  (div
-    {:style style-section}
-    (span {:style widget/style-hint, :attrs {:inner-text hint}})
-    (div {:style style-value} (render-value value))))
 
 (def data-table
  [["a nil:" nil]
@@ -35,6 +27,14 @@
   ["a mixed data:" schema/a-mixed-data]
   ["an element"
    (div {} (div {:style style-section}) (comp-space 8 nil))]])
+
+(def style-value {})
+
+(defn render-section [hint value]
+  (div
+    {:style style-section}
+    (span {:style widget/style-hint, :attrs {:inner-text hint}})
+    (div {:style style-value} (render-value value))))
 
 (defn render [store]
   (fn [state mutate]
