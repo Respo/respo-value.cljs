@@ -1,6 +1,5 @@
 
-(ns respo-value.schema
-  (:require [clojure.string :as string]))
+(ns respo-value.schema (:require [clojure.string :as string]))
 
 (def a-hash-map {:b 2, :a 1})
 

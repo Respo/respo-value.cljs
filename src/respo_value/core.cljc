@@ -13,16 +13,9 @@
 (defn render-app! []
   (let [mount-target (.querySelector js.document "#app")]
     (comment println "states:" @states-ref)
-    (render!
-      (comp-container @store-ref)
-      mount-target
-      dispatch!
-      states-ref)))
+    (render! (comp-container @store-ref) mount-target dispatch! states-ref)))
 
-(defn on-jsload []
-  (clear-cache!)
-  (render-app!)
-  (println "code updated."))
+(defn on-jsload [] (clear-cache!) (render-app!) (println "code updated."))
 
 (defn -main []
   (enable-console-print!)

@@ -1,24 +1,24 @@
 
 (set-env!
  :dependencies '[[org.clojure/clojure       "1.8.0"       :scope "test"]
-                 [org.clojure/clojurescript "1.9.216"     :scope "test"]
+                 [org.clojure/clojurescript "1.9.293"     :scope "test"]
                  [adzerk/boot-cljs          "1.7.228-1"   :scope "test"]
                  [adzerk/boot-reload        "0.4.12"      :scope "test"]
-                 [cirru/boot-stack-server   "0.1.12"      :scope "test"]
+                 [cirru/boot-stack-server   "0.1.23"      :scope "test"]
                  [binaryage/devtools        "0.7.2"       :scope "test"]
                  [adzerk/boot-test          "1.1.1"       :scope "test"]
-                 [respo                     "0.3.23"]
+                 [respo                     "0.3.32"]
                  [mvc-works/hsl             "0.1.2"]])
 
 (require '[adzerk.boot-cljs   :refer [cljs]]
          '[adzerk.boot-reload :refer [reload]]
          '[stack-server.core  :refer [start-stack-editor! transform-stack]]
          '[respo.alias        :refer [html head title script style meta' div link body]]
-         '[respo.render.static-html :refer [make-html]]
+         '[respo.render.html  :refer [make-html]]
          '[adzerk.boot-test   :refer :all]
          '[clojure.java.io    :as    io])
 
-(def +version+ "0.1.6")
+(def +version+ "0.1.7")
 
 (task-options!
   pom {:project     'respo/value
@@ -32,20 +32,20 @@
 (defn html-dsl [data fileset]
   (make-html
     (html {}
-    (head {}
-      (title (use-text "Respo value"))
-      (link {:attrs {:rel "icon" :type "image/png" :href "http://logo.respo.site/respo.png"}})
-      (if (:build? data)
-        (link (:attrs {:rel "manifest" :href "manifest.json"})))
-      (meta'{:attrs {:charset "utf-8"}})
-      (meta' {:attrs {:name "viewport" :content "width=device-width, initial-scale=1"}})
-      (meta' {:attrs {:id "ssr-stages" :content "#{}"}})
-      (style (use-text "body {margin: 0;}"))
-      (style (use-text "body * {box-sizing: border-box;}"))
-      (script {:attrs {:id "config" :type "text/edn" :innerHTML (pr-str data)}}))
-    (body {}
-      (div {:attrs {:id "app"}})
-      (script {:attrs {:src "main.js"}})))))
+      (head {}
+        (title (use-text "Respo value"))
+        (link {:attrs {:rel "icon" :type "image/png" :href "http://logo.respo.site/respo.png"}})
+        (if (:build? data)
+          (link (:attrs {:rel "manifest" :href "manifest.json"})))
+        (meta'{:attrs {:charset "utf-8"}})
+        (meta' {:attrs {:name "viewport" :content "width=device-width, initial-scale=1"}})
+        (meta' {:attrs {:id "ssr-stages" :content "#{}"}})
+        (style (use-text "body {margin: 0;}"))
+        (style (use-text "body * {box-sizing: border-box;}"))
+        (script {:attrs {:id "config" :type "text/edn" :innerHTML (pr-str data)}}))
+      (body {}
+        (div {:attrs {:id "app"}})
+        (script {:attrs {:src "main.js"}})))))
 
 (deftask html-file
   "task to generate HTML file"
@@ -59,13 +59,17 @@
         (add-resource tmp)
         (commit!)))))
 
+(deftask editor! []
+  (comp
+    (repl)
+    (start-stack-editor!  :extname ".cljc")
+    (target :dir #{"src/"})))
+
 (deftask dev! []
   (set-env!
     :asset-paths #{"assets"})
   (comp
-    (repl)
-    (start-stack-editor! :extname ".cljc")
-    (target :dir #{"src/"})
+    (editor!)
     (html-file :data {:build? false})
     (reload :on-jsload 'respo-value.core/on-jsload
             :cljs-asset-path ".")
@@ -83,7 +87,12 @@
   (comp
     (transform-stack :filename "stack-sepal.ir" :extname ".cljc")
     (cljs :optimizations :advanced
-          :compiler-options {:language-in :ecmascript5})
+          :compiler-options {:language-in :ecmascript5
+                             :pseudo-names true
+                             :static-fns true
+                             :parallel-build true
+                             :optimize-constants true
+                             :source-map true})
     (html-file :data {:build? true})
     (target)))
 
