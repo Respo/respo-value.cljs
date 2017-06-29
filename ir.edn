@@ -1,0 +1,391 @@
+{:package "respo-value",
+ :root {:ns "main", :def "main!"},
+ :files {"comp.container" {:ns ["ns"
+                                "respo-value.comp.container"
+                                [":require-macros"
+                                 ["[]" "respo.macros" ":refer" ["[]" "defcomp" "cursor->" "<>" "div" "span"]]]
+                                [":require"
+                                 ["[]" "hsl.core" ":refer" ["[]" "hsl"]]
+                                 ["[]" "respo-value.comp.value" ":refer" ["[]" "render-value"]]
+                                 ["[]" "respo-value.schema" ":as" "schema"]
+                                 ["[]" "respo.comp.space" ":refer" ["[]" "=<"]]
+                                 ["[]" "respo.comp.inspect" ":refer" ["[]" "comp-inspect"]]
+                                 ["[]" "respo.core" ":refer" ["[]" "create-comp"]]
+                                 ["[]" "respo-value.style.layout" ":as" "layout"]
+                                 ["[]" "respo-value.style.widget" ":as" "widget"]]],
+                           :defs {"data-table" ["def"
+                                                "data-table"
+                                                ["[]"
+                                                 ["[]" "|a nil:" "nil"]
+                                                 ["[]" "|a number:" "schema/a-number"]
+                                                 ["[]" "|a string:" "schema/a-string"]
+                                                 ["[]" "|a keyword:" "schema/a-keyword"]
+                                                 ["[]" "|a bool:" "schema/a-bool"]
+                                                 ["[]" "|a function:" "schema/a-function"]
+                                                 ["[]" "|a list:" "schema/a-list"]
+                                                 ["[]" "|a vector:" "schema/a-vector"]
+                                                 ["[]" "|a hash-set:" "schema/a-hash-set"]
+                                                 ["[]" "|a nested vector:" "schema/a-nested-vector"]
+                                                 ["[]" "|a hash-map:" "schema/a-hash-map"]
+                                                 ["[]" "|a nested hash-map:" "schema/a-nested-hash-map"]
+                                                 ["[]" "|a mixed data:" "schema/a-mixed-data"]
+                                                 ["[]"
+                                                  "|an element"
+                                                  ["div"
+                                                   ["{}"]
+                                                   ["div" ["{}" [":style" "style-section"]]]
+                                                   ["=<" "8" "nil"]]]]],
+                                  "comp-container" ["defcomp"
+                                                    "comp-container"
+                                                    ["store"]
+                                                    ["let"
+                                                     [["states" [":states" "store"]]]
+                                                     ["div"
+                                                      ["{}" [":style" "layout/container"]]
+                                                      ["span" ["{}" ":attrs" ["{}"]]]
+                                                      ["div"
+                                                       ["{}"]
+                                                       ["->>"
+                                                        "data-table"
+                                                        ["map-indexed"
+                                                         ["fn"
+                                                          ["idx" "pair"]
+                                                          ["[]"
+                                                           "idx"
+                                                           ["cursor->"
+                                                            "idx"
+                                                            "comp-section"
+                                                            "states"
+                                                            ["first" "pair"]
+                                                            ["last" "pair"]]]]]]]
+                                                      ["comp-inspect" "|States" "states" "nil"]]]],
+                                  "style-value" ["def" "style-value" ["{}"]],
+                                  "style-section" ["def"
+                                                   "style-section"
+                                                   ["{}"
+                                                    [":display" "|flex"]
+                                                    [":font-family" "|Verdana"]
+                                                    [":padding" "|8px 8px"]]],
+                                  "comp-section" ["defcomp"
+                                                  "comp-section"
+                                                  ["states" "hint" "value"]
+                                                  ["div"
+                                                   ["{}" [":style" "style-section"]]
+                                                   ["span" ["{}" [":inner-text" "hint"] [":style" "widget/style-hint"]]]
+                                                   ["div"
+                                                    ["{}" [":style" "style-value"]]
+                                                    ["render-value" "states" "value"]]]]},
+                           :procs []},
+         "render" {:ns ["ns"
+                        "respo-value.render"
+                        [":require"
+                         ["[]" "respo.render.html" ":refer" ["[]" "make-string"]]
+                         ["[]" "shell-page.core" ":refer" ["[]" "make-page" "spit" "slurp"]]
+                         ["[]" "respo-value.comp.container" ":refer" ["[]" "comp-container"]]
+                         ["[]" "respo-value.schema" ":as" "schema"]]],
+                   :defs {"main!" ["defn"
+                                   "main!"
+                                   []
+                                   ["if"
+                                    ["=" "js/process.env.env" "|dev"]
+                                    ["spit" "|target/index.html" ["dev-page"]]
+                                    ["spit" "|dist/index.html" ["prod-page"]]]],
+                          "base-info" ["def"
+                                       "base-info"
+                                       ["{}"
+                                        [":title" "|Respo Value"]
+                                        [":icon" "|http://logo.respo.site/respo.png"]
+                                        [":ssr" "nil"]
+                                        [":inner-html" "nil"]]],
+                          "dev-page" ["defn"
+                                      "dev-page"
+                                      []
+                                      ["make-page"
+                                       "|"
+                                       ["merge"
+                                        "base-info"
+                                        ["{}"
+                                         [":styles" ["[]"]]
+                                         [":scripts" ["[]" "|/main.js" "|/browser/lib.js" "|/browser/main.js"]]]]]],
+                          "prod-page" ["defn"
+                                       "prod-page"
+                                       []
+                                       ["let"
+                                        [["html-content" ["make-string" ["comp-container" "schema/store"]]]
+                                         ["manifest" [".parse" "js/JSON" ["slurp" "|dist/assets-manifest.json"]]]
+                                         ["cljs-manifest" [".parse" "js/JSON" ["slurp" "|dist/manifest.json"]]]]
+                                        ["make-page"
+                                         "html-content"
+                                         ["merge"
+                                          "base-info"
+                                          ["{}"
+                                           [":styles" ["[]" ["aget" "manifest" "|main.css"]]]
+                                           [":scripts"
+                                            ["[]"
+                                             ["aget" "manifest" "|main.js"]
+                                             ["->" "cljs-manifest" ["aget" "0"] ["aget" "|js-name"]]
+                                             ["->" "cljs-manifest" ["aget" "1"] ["aget" "|js-name"]]]]]]]]]},
+                   :procs []},
+         "comp.value" {:ns ["ns"
+                            "respo-value.comp.value"
+                            [":require-macros"
+                             ["[]" "respo.macros" ":refer" ["[]" "defcomp" "cursor->" "<>" "div" "span"]]]
+                            [":require"
+                             ["[]" "hsl.core" ":refer" ["[]" "hsl"]]
+                             ["[]" "respo-value.style.widget" ":as" "widget"]
+                             ["[]" "respo-value.style.layout" ":as" "layout"]
+                             ["[]" "respo-value.style.decoration" ":as" "decoration"]
+                             ["[]" "respo.core" ":refer" ["[]" "create-comp"]]]],
+                       :defs {"comp-map" ["defcomp"
+                                          "comp-map"
+                                          ["states" "x" "level"]
+                                          ["let"
+                                           [["folded?"
+                                             ["if" ["some?" [":data" "states"]] [":data" "states"] [">=" "level" "1"]]]]
+                                           ["if"
+                                            ["and" "folded?" ["not" ["empty?" "x"]]]
+                                            ["div"
+                                             ["{}"
+                                              [":style" ["merge" "widget/structure" "decoration/folded"]]
+                                              [":event" ["{}" ":click" ["toggle-folding" "folded?"]]]]
+                                             ["<>" "span" ["str" "|{}~" ["count" "x"]] "widget/only-text"]]
+                                            ["div"
+                                             ["{}"
+                                              [":style" ["merge" "widget/structure" "layout/row"]]
+                                              [":event" ["{}" ":click" ["toggle-folding" "folded?"]]]]
+                                             ["<>" "span" "|{}" "widget/only-text"]
+                                             ["render-fields" "states" "x" "level"]]]]],
+                              "render-children" ["defn"
+                                                 "render-children"
+                                                 ["states" "xs" "level"]
+                                                 ["div"
+                                                  ["{}" [":style" ["merge" "widget/style-children" "layout/column"]]]
+                                                  ["->>"
+                                                   "xs"
+                                                   ["map-indexed"
+                                                    ["fn"
+                                                     ["index" "child"]
+                                                     ["[]" "index" ["render-value" "states" "child" ["inc" "level"]]]]]]]],
+                              "render-fields" ["defn"
+                                               "render-fields"
+                                               ["states" "xs" "level"]
+                                               ["div"
+                                                ["{}" [":style" ["merge" "widget/style-children" "layout/column"]]]
+                                                ["->>"
+                                                 "xs"
+                                                 ["map-indexed"
+                                                  ["fn"
+                                                   ["index" "field"]
+                                                   ["[]"
+                                                    "index"
+                                                    ["div"
+                                                     ["{}" [":style" "layout/row"]]
+                                                     ["render-value" "states" ["first" "field"] ["inc" "level"]]
+                                                     ["render-value" "states" ["last" "field"] ["inc" "level"]]]]]]]]],
+                              "render-value" ["defn"
+                                              "render-value"
+                                              [["states" "x"] ["render-value" "states" "x" "0"]]
+                                              [["states" "x" "level"]
+                                               ["cond"
+                                                [["nil?" "x"] ["comp-nil"]]
+                                                [["number?" "x"] ["comp-number" "x"]]
+                                                [["string?" "x"] ["comp-string" "x"]]
+                                                [["keyword?" "x"] ["comp-keyword" "x"]]
+                                                [["fn?" "x"] ["comp-function" "x"]]
+                                                [["or" ["=" "x" "true"] ["=" "x" "false"]] ["comp-bool" "x"]]
+                                                [["vector?" "x"]
+                                                 ["cursor->" ":vector" "comp-vector" "states" "x" "level"]]
+                                                [["set?" "x"] ["cursor->" ":set" "comp-set" "states" "x" "level"]]
+                                                [["seq?" "x"] ["cursor->" ":list" "comp-list" "states" "x" "level"]]
+                                                [["map?" "x"] ["cursor->" ":map" "comp-map" "states" "x" "level"]]
+                                                [":else"
+                                                 ["div"
+                                                  ["{}"
+                                                   [":style" "widget/style-unknown"]
+                                                   [":attrs" ["{}" ":inner-text" ["str" "|unknown" ["pr-str" "x"]]]]]]]]]],
+                              "comp-nil" ["defcomp" "comp-nil" [] ["<>" "span" "|nil" "widget/literal"]],
+                              "comp-list" ["defcomp"
+                                           "comp-list"
+                                           ["states" "x" "level"]
+                                           ["let"
+                                            [["folded?"
+                                              ["if" ["some?" [":data" "states"]] [":data" "states"] [">=" "level" "1"]]]]
+                                            ["if"
+                                             ["and" "folded?" ["not" ["empty?" "x"]]]
+                                             ["div"
+                                              ["{}"
+                                               [":style" ["merge" "widget/structure" "decoration/folded"]]
+                                               [":event" ["{}" ":click" ["toggle-folding" "folded?"]]]]
+                                              ["<>" "span" ["str" "|'()~" ["count" "x"]] "widget/only-text"]]
+                                             ["div"
+                                              ["{}"
+                                               [":style" ["merge" "widget/structure" "layout/row"]]
+                                               [":event" ["{}" ":click" ["toggle-folding" "folded?"]]]]
+                                              ["<>" "span" ["str" "|'()"] "widget/only-text"]
+                                              ["render-children" "states" "x" "level"]]]]],
+                              "comp-set" ["defcomp"
+                                          "comp-set"
+                                          ["states" "x" "level"]
+                                          ["let"
+                                           [["folded?"
+                                             ["if" ["some?" [":data" "states"]] [":data" "states"] [">=" "level" "1"]]]]
+                                           ["if"
+                                            ["and" "folded?" ["not" ["empty?" "x"]]]
+                                            ["div"
+                                             ["{}"
+                                              [":style" ["merge" "widget/structure" "decoration/folded"]]
+                                              [":event" ["{}" ":click" ["toggle-folding" "folded?"]]]]
+                                             ["<>" "span" ["str" "|#{}~" ["count" "x"]] "widget/only-text"]]
+                                            ["div"
+                                             ["{}"
+                                              [":style" ["merge" "widget/structure" "layout/row"]]
+                                              [":event" ["{}" ":click" ["toggle-folding" "folded?"]]]]
+                                             ["<>" "span" ["str" "|#{}"] "widget/only-text"]
+                                             ["render-children" "states" "x" "level"]]]]],
+                              "comp-string" ["defcomp"
+                                             "comp-string"
+                                             ["x"]
+                                             ["<>" "span" ["pr-str" "x"] "widget/literal"]],
+                              "comp-function" ["defcomp" "comp-function" [] ["<>" "span" "|fn" "widget/literal"]],
+                              "comp-vector" ["defcomp"
+                                             "comp-vector"
+                                             ["states" "x" "level"]
+                                             ["let"
+                                              [["folded?"
+                                                ["if" ["some?" [":data" "states"]] [":data" "states"] [">" "level" "1"]]]]
+                                              ["if"
+                                               ["and" "folded?" ["not" ["empty?" "x"]]]
+                                               ["div"
+                                                ["{}"
+                                                 [":style" ["merge" "widget/structure" "decoration/folded"]]
+                                                 [":event" ["{}" ":click" ["toggle-folding" "folded?"]]]]
+                                                ["<>" "span" ["str" "|[]~" ["count" "x"]] "widget/only-text"]]
+                                               ["div"
+                                                ["{}"
+                                                 [":style" ["merge" "widget/structure" "layout/row"]]
+                                                 [":event" ["{}" ":click" ["toggle-folding" "folded?"]]]]
+                                                ["<>" "span" ["str" "|[]"] "widget/only-text"]
+                                                ["render-children" "states" "x" "level"]]]]],
+                              "comp-keyword" ["defcomp" "comp-keyword" ["x"] ["<>" "span" ["str" "x"] "widget/literal"]],
+                              "toggle-folding" ["defn"
+                                                "toggle-folding"
+                                                ["folded?"]
+                                                ["fn" ["e" "d!" "m!"] ["m!" ["not" "folded?"]]]],
+                              "comp-number" ["defcomp" "comp-number" ["x"] ["<>" "span" ["str" "x"] "widget/literal"]],
+                              "comp-bool" ["defcomp" "comp-bool" ["x"] ["<>" "span" ["str" "x"] "widget/literal"]]},
+                       :procs []},
+         "schema" {:ns ["ns" "respo-value.schema" [":require" ["[]" "clojure.string" ":as" "string"]]],
+                   :defs {"a-hash-map" ["def" "a-hash-map" ["{}" ":a" "1" ":b" "2"]],
+                          "a-list" ["def" "a-list" ["list" "1" "2" "3" "4"]],
+                          "a-function" ["def" "a-function" ["fn" ["x"] ["+" "x" "1"]]],
+                          "a-bool" ["def" "a-bool" "true"],
+                          "a-hash-set" ["def" "a-hash-set" ["hash-set" "1" "2" "3"]],
+                          "a-vector" ["def" "a-vector" ["[]" "1" "2" "3"]],
+                          "a-nested-hash-map" ["def"
+                                               "a-nested-hash-map"
+                                               ["{}" ":a" "1" ":b" ["{}" ":c" "3" ":d" ["{}" ":e" "4"] ":f" "5"]]],
+                          "a-nested-vector" ["def" "a-nested-vector" ["[]" "1" "2" ["[]" "3" "4" ["[]" "5" "6"]] "7"]],
+                          "a-string" ["def" "a-string" "|a string"],
+                          "a-keyword" ["def" "a-keyword" ":kywd"],
+                          "a-mixed-data" ["def" "a-mixed-data" ["{}" ":a" ["[]" "1" "2" ["{}" ":c" "|str"]]]],
+                          "store" ["def" "store" ["{}"]],
+                          "a-number" ["def" "a-number" "1"]},
+                   :procs []},
+         "style.decoration" {:ns ["ns"
+                                  "respo-value.style.decoration"
+                                  [":require" ["[]" "hsl.core" ":refer" ["[]" "hsl"]]]],
+                             :defs {"folded" ["def" "folded" ["{}" [":background-color" ["hsl" "0" "0" "30" "0.1"]]]]},
+                             :procs []},
+         "style.layout" {:ns ["ns" "respo-value.style.layout" [":require" ["[]" "hsl.core" ":refer" ["[]" "hsl"]]]],
+                         :defs {"row" ["def"
+                                       "row"
+                                       ["{}"
+                                        [":display" "|flex"]
+                                        [":flex-direction" "|row"]
+                                        [":align-items" "|flex-start"]]],
+                                "column" ["def"
+                                          "column"
+                                          ["{}"
+                                           [":display" "|flex"]
+                                           [":flex-direction" "|column"]
+                                           [":align-items" "|flex-start"]]],
+                                "container" ["def" "container" ["{}" [":padding" "|200px 24px"]]]},
+                         :procs []},
+         "style.widget" {:ns ["ns" "respo-value.style.widget" [":require" ["[]" "hsl.core" ":refer" ["[]" "hsl"]]]],
+                         :defs {"only-text" ["def" "only-text" ["{}" [":pointer-events" "|none"]]],
+                                "style-hint" ["def"
+                                              "style-hint"
+                                              ["{}"
+                                               [":width" "|240px"]
+                                               [":color" ["hsl" "0" "0" "50"]]
+                                               [":font-size" "|14px"]]],
+                                "structure" ["def"
+                                             "structure"
+                                             ["{}"
+                                              [":line-height" "|16px"]
+                                              [":border-radius" "|4px"]
+                                              [":padding" "|0px 2px"]
+                                              [":color" ["hsl" "0" "0" "40"]]
+                                              [":font-family" "|Source Code Pro, menlo, monospace"]
+                                              [":font-size" "|12px"]
+                                              [":display" "|inline-block"]
+                                              [":margin" "|4px"]
+                                              [":box-shadow" ["str" "|0 0 1px " ["hsl" "0" "0" "0" "0.3"]]]
+                                              [":vertical-align" "|top"]
+                                              [":cursor" "|pointer"]]],
+                                "style-children" ["def"
+                                                  "style-children"
+                                                  ["{}"
+                                                   [":display" "|inline-block"]
+                                                   [":vertical-align" "|top"]
+                                                   [":padding" "|0px"]]],
+                                "literal" ["def"
+                                           "literal"
+                                           ["{}"
+                                            [":line-height" "|16px"]
+                                            [":border-radius" "|4px"]
+                                            [":padding" "|0px 4px"]
+                                            [":color" ["hsl" "0" "0" "30"]]
+                                            [":font-family" "|Source Code Pro, menlo, monospace"]
+                                            [":font-size" "|12px"]
+                                            [":display" "|inline-block"]
+                                            [":margin" "|4px"]
+                                            [":box-shadow" ["str" "|0 0 1px " ["hsl" "0" "0" "0" "0.3"]]]
+                                            [":vertical-align" "|top"]]],
+                                "style-unknown" ["def" "style-unknown" ["{}"]]},
+                         :procs []},
+         "main" {:ns ["ns"
+                      "respo-value.main"
+                      [":require"
+                       ["[]" "hsl.core" ":refer" ["[]" "hsl"]]
+                       ["[]" "respo.core" ":refer" ["[]" "render!" "clear-cache!" "realize-ssr!"]]
+                       ["[]" "respo.cursor" ":refer" ["[]" "mutate"]]
+                       ["[]" "respo-value.comp.container" ":refer" ["[]" "comp-container"]]
+                       ["[]" "respo-value.schema" ":as" "schema"]]],
+                 :defs {"reload!" ["defn"
+                                   "reload!"
+                                   []
+                                   ["clear-cache!"]
+                                   ["render-app!" "render!"]
+                                   ["println" "|Code updated."]],
+                        "main!" ["defn"
+                                 "main!"
+                                 []
+                                 ["if" "ssr?" ["render-app!" "realize-ssr!"]]
+                                 ["render-app!" "render!"]
+                                 ["add-watch" "*store" ":rerender" ["fn" [] ["render-app!" "render!"]]]],
+                        "*store" ["defonce" "*store" ["atom" "schema/store"]],
+                        "dispatch!" ["defn"
+                                     "dispatch!"
+                                     ["op" "op-data"]
+                                     ["if"
+                                      ["=" "op" ":states"]
+                                      ["swap!" "*store" "update" ":states" ["mutate" "op-data"]]
+                                      [".log" "js/console" "|dispatch:" "op" "op-data"]]],
+                        "render-app!" ["defn"
+                                       "render-app!"
+                                       ["renderer"]
+                                       ["renderer" "mount-target" ["comp-container" "@*store"] "dispatch!"]],
+                        "mount-target" ["def" "mount-target" [".querySelector" "js.document" "|.app"]],
+                        "ssr?" ["def" "ssr?" ["some?" [".querySelector" "js/document" "|meta.respo-ssr"]]]},
+                 :procs [["set!" "js/window.onload" "main!"]]}}}

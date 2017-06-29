@@ -11,11 +11,11 @@ Demo http://repo.respo.site/value/
 [![Clojars Project](https://img.shields.io/clojars/v/respo/value.svg)](https://clojars.org/respo/value)
 
 ```clojure
-[respo/value "0.1.7"]
+[respo/value "0.1.8"]
 ```
 
 ```clojure
-(respo-value.comp.value/render-value x)
+(respo-value.comp.value/render-value states x)
 ```
 
 ### License

@@ -1,4 +1,4 @@
 
-/target/
-/src/*.*
-.nrepl-history
+/dist
+/target
+/node_modules
