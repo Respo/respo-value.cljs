@@ -1,9 +1,10 @@
 
 (set-env!
+ :resource-paths #{"src"}
  :dependencies '[[respo           "0.3.32"]
                  [mvc-works/hsl   "0.1.2"]])
 
-(def +version+ "0.1.8")
+(def +version+ "0.1.9")
 
 (deftask build []
   (comp
