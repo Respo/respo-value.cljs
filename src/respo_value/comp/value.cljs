@@ -13,13 +13,13 @@
 
 (declare render-fields)
 
-(declare render-value)
-
 (declare comp-list)
 
 (declare comp-set)
 
 (declare comp-vector)
+
+(declare comp-value)
 
 (defcomp comp-nil () (<> span "nil" widget/literal))
 
@@ -34,6 +34,24 @@
 (defcomp comp-number (x) (<> span (str x) widget/literal))
 
 (defcomp comp-bool (x) (<> span (str x) widget/literal))
+
+(defcomp
+ comp-value
+ (states x level)
+ (let [level (or level 0)]
+   (cond
+     (nil? x) (comp-nil)
+     (number? x) (comp-number x)
+     (string? x) (comp-string x)
+     (keyword? x) (comp-keyword x)
+     (fn? x) (comp-function x)
+     (or (= x true) (= x false)) (comp-bool x)
+     (vector? x) (comp-vector states x level)
+     (set? x) (comp-set states x level)
+     (seq? x) (comp-list states x level)
+     (map? x) (comp-map states x level)
+     :else
+       (div {:style widget/style-unknown, :attrs {:inner-text (str "unknown" (pr-str x))}}))))
 
 (defcomp
  comp-vector
@@ -77,23 +95,6 @@
       (<> span (str "'()") widget/only-text)
       (render-children states x level)))))
 
-(defn render-value
-  ([states x] (render-value states x 0))
-  ([states x level]
-   (cond
-     (nil? x) (comp-nil)
-     (number? x) (comp-number x)
-     (string? x) (comp-string x)
-     (keyword? x) (comp-keyword x)
-     (fn? x) (comp-function x)
-     (or (= x true) (= x false)) (comp-bool x)
-     (vector? x) (cursor-> :vector comp-vector states x level)
-     (set? x) (cursor-> :set comp-set states x level)
-     (seq? x) (cursor-> :list comp-list states x level)
-     (map? x) (cursor-> :map comp-map states x level)
-     :else
-       (div {:style widget/style-unknown, :attrs {:inner-text (str "unknown" (pr-str x))}}))))
-
 (defn render-fields [states xs level]
   (div
    {:style (merge widget/style-children layout/column)}
@@ -103,13 +104,15 @@
            [index
             (div
              {:style layout/row}
-             (render-value states (first field) (inc level))
-             (render-value states (last field) (inc level)))])))))
+             (comp-value states (first field) 0)
+             (cursor-> index comp-value states (last field) (inc level)))])))))
 
 (defn render-children [states xs level]
   (div
    {:style (merge widget/style-children layout/column)}
-   (->> xs (map-indexed (fn [index child] [index (render-value states child (inc level))])))))
+   (->> xs
+        (map-indexed
+         (fn [index child] [index (cursor-> index comp-value states child (inc level))])))))
 
 (defcomp
  comp-map

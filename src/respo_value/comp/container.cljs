@@ -2,7 +2,7 @@
 (ns respo-value.comp.container
   (:require-macros [respo.macros :refer [defcomp cursor-> <> div span]])
   (:require [hsl.core :refer [hsl]]
-            [respo-value.comp.value :refer [render-value]]
+            [respo-value.comp.value :refer [comp-value]]
             [respo-value.schema :as schema]
             [respo.comp.space :refer [=<]]
             [respo.comp.inspect :refer [comp-inspect]]
@@ -36,7 +36,7 @@
  (div
   {:style style-section}
   (span {:inner-text hint, :style widget/style-hint})
-  (div {:style style-value} (render-value states value))))
+  (div {:style style-value} (cursor-> hint comp-value states value))))
 
 (defcomp
  comp-container
@@ -48,6 +48,5 @@
     (div
      {}
      (->> data-table
-          (map-indexed
-           (fn [idx pair] [idx (cursor-> idx comp-section states (first pair) (last pair))]))))
+          (map-indexed (fn [idx pair] [idx (comp-section states (first pair) (last pair))]))))
     (comp-inspect "States" states nil))))
