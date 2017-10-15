@@ -4,7 +4,7 @@
  :dependencies '[[respo           "0.6.4"]
                  [mvc-works/hsl   "0.1.2"]])
 
-(def +version+ "0.2.0-alpha2")
+(def +version+ "0.2.1")
 
 (deftask build []
   (comp

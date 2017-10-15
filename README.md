@@ -11,7 +11,7 @@ Demo http://repo.respo.site/value/
 [![Clojars Project](https://img.shields.io/clojars/v/respo/value.svg)](https://clojars.org/respo/value)
 
 ```clojure
-[respo/value "0.2.0-alpha2"]
+[respo/value "0.2.1"]
 ```
 
 ```clojure
