@@ -65,7 +65,7 @@
      (div
       {:style (merge widget/structure layout/row), :event {:click (toggle-folding folded?)}}
       (<> span (str "[]") widget/only-text)
-      (render-children states x level)))))
+      (render-children states *cursor* x level)))))
 
 (defcomp
  comp-set
@@ -79,7 +79,7 @@
      (div
       {:style (merge widget/structure layout/row), :event {:click (toggle-folding folded?)}}
       (<> span (str "#{}") widget/only-text)
-      (render-children states x level)))))
+      (render-children states *cursor* x level)))))
 
 (defcomp
  comp-list
@@ -93,9 +93,9 @@
      (div
       {:style (merge widget/structure layout/row), :event {:click (toggle-folding folded?)}}
       (<> span (str "'()") widget/only-text)
-      (render-children states x level)))))
+      (render-children states *cursor* x level)))))
 
-(defn render-fields [states xs level]
+(defn render-fields [states *cursor* xs level]
   (div
    {:style (merge widget/style-children layout/column)}
    (->> xs
@@ -107,7 +107,7 @@
              (comp-value states (first field) 0)
              (cursor-> index comp-value states (last field) (inc level)))])))))
 
-(defn render-children [states xs level]
+(defn render-children [states *cursor* xs level]
   (div
    {:style (merge widget/style-children layout/column)}
    (->> xs
@@ -126,4 +126,4 @@
      (div
       {:style (merge widget/structure layout/row), :event {:click (toggle-folding folded?)}}
       (<> span "{}" widget/only-text)
-      (render-fields states x level)))))
+      (render-fields states *cursor* x level)))))
