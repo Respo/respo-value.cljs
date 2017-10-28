@@ -1,11 +1,10 @@
 
 (ns respo-value.comp.value
-  (:require-macros [respo.macros :refer [defcomp cursor-> <> div span]])
   (:require [hsl.core :refer [hsl]]
             [respo-value.style.widget :as widget]
             [respo-value.style.layout :as layout]
             [respo-value.style.decoration :as decoration]
-            [respo.core :refer [create-comp]]))
+            [respo.macros :refer [defcomp cursor-> <> div span list->]]))
 
 (declare comp-map)
 
@@ -96,7 +95,8 @@
       (render-children states *cursor* x level)))))
 
 (defn render-fields [states *cursor* xs level]
-  (div
+  (list->
+   :div
    {:style (merge widget/style-children layout/column)}
    (->> xs
         (map-indexed
@@ -108,7 +108,8 @@
              (cursor-> index comp-value states (last field) (inc level)))])))))
 
 (defn render-children [states *cursor* xs level]
-  (div
+  (list->
+   :div
    {:style (merge widget/style-children layout/column)}
    (->> xs
         (map-indexed

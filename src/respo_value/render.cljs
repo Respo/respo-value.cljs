@@ -15,6 +15,8 @@
     {:styles ["http://localhost:8100/main.css"],
      :scripts ["/main.js" "/browser/lib.js" "/browser/main.js"]})))
 
+(def preview? (= "preview" js/process.env.prod))
+
 (defn prod-page []
   (let [html-content (make-string (comp-container schema/store))
         webpack-info (.parse js/JSON (slurp "dist/webpack-manifest.json"))
