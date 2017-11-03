@@ -43,7 +43,7 @@
      (number? x) (comp-number x)
      (string? x) (comp-string x)
      (keyword? x) (comp-keyword x)
-     (fn? x) (comp-function x)
+     (fn? x) (comp-function)
      (or (= x true) (= x false)) (comp-bool x)
      (vector? x) (comp-vector states x level)
      (set? x) (comp-set states x level)

@@ -35,7 +35,7 @@
  (div
   {:style style-section}
   (span {:inner-text hint, :style widget/style-hint})
-  (div {:style style-value} (cursor-> hint comp-value states value))))
+  (div {:style style-value} (cursor-> hint comp-value states value 0))))
 
 (defcomp
  comp-container

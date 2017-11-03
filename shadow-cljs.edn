@@ -3,8 +3,7 @@
  :dependencies [[mvc-works/hsl          "0.1.2"]
                 [mvc-works/shell-page   "0.1.5"]
                 [respo/ui               "0.2.0"]
-                [binaryage/devtools     "0.9.7"]
-                [respo                  "0.7.0-a1"]]
+                [respo                  "0.7.1"]]
  :open-file-command ["subl" ["%s:%s:%s" :file :line :column]]
  :builds {:browser {:target :browser
                     :output-dir "target/browser"
@@ -14,8 +13,7 @@
                               :lib {:entries [respo.core respo.macros
                                               respo.comp.inspect]}}
                     :devtools {:after-load respo-value.main/reload!
-                               :preloads [shadow.cljs.devtools.client.hud
-                                          devtools.preload]}
+                               :preloads [shadow.cljs.devtools.client.hud]}
                     :release {:output-dir "dist/"
                               :module-hash-names 8
                               :build-options {:manifest-name "cljs-manifest.json"}}}
