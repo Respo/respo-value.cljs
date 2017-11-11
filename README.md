@@ -15,7 +15,7 @@ Demo http://repo.respo.site/value/
 ```
 
 ```clojure
-(respo-value.comp.value/comp-value states x)
+(respo-value.comp.value/comp-value states x 0)
 ```
 
 ### License
