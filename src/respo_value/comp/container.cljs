@@ -11,6 +11,16 @@
 
 (def style-section {:display "flex", :font-family "Verdana", :padding "8px 8px"})
 
+(def style-value {})
+
+(defcomp
+ comp-section
+ (states hint value)
+ (div
+  {:style style-section}
+  (span {:inner-text hint, :style widget/style-hint})
+  (div {:style style-value} (cursor-> hint comp-value states value 0))))
+
 (def data-table
   [["a nil:" nil]
    ["a number:" schema/a-number]
@@ -26,16 +36,6 @@
    ["a nested hash-map:" schema/a-nested-hash-map]
    ["a mixed data:" schema/a-mixed-data]
    ["an element" (div {} (div {:style style-section}) (=< 8 nil))]])
-
-(def style-value {})
-
-(defcomp
- comp-section
- (states hint value)
- (div
-  {:style style-section}
-  (span {:inner-text hint, :style widget/style-hint})
-  (div {:style style-value} (cursor-> hint comp-value states value 0))))
 
 (defcomp
  comp-container

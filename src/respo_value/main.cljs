@@ -17,13 +17,13 @@
 
 (defn render-app! [renderer] (renderer mount-target (comp-container @*store) dispatch!))
 
-(defn reload! [] (clear-cache!) (render-app! render!) (println "Code updated."))
-
 (def ssr? (some? (.querySelector js/document "meta.respo-ssr")))
 
 (defn main! []
   (if ssr? (render-app! realize-ssr!))
   (render-app! render!)
   (add-watch *store :rerender (fn [] (render-app! render!))))
+
+(defn reload! [] (clear-cache!) (render-app! render!) (println "Code updated."))
 
 (set! js/window.onload main!)
