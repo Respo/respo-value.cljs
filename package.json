@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "cdn": "rsync -avr --progress dist/* tiye.me:cdn/respo-value",
-    "tiye": "rsync -r dist/{index.html,manifest.json} respo.site:repo/Respo/value/",
+    "tiye": "rsync -r dist/{index.html,manifest.json} respo-mvc.org:repo/Respo/value/",
     "upload": "yarn cdn && yarn tiye",
     "release": "shadow-cljs release browser",
     "watch": "shadow-cljs watch browser",
@@ -23,8 +23,8 @@
   },
   "devDependencies": {
     "http-server": "^0.11.1",
-    "shadow-cljs": "^2.0.138",
-    "shortid": "^2.2.8"
+    "shadow-cljs": "^2.6.21",
+    "shortid": "^2.2.13"
   },
   "dependencies": {}
 }

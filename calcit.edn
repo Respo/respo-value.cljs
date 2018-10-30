@@ -86,7 +86,7 @@
          :type :expr, :id "ryg_YaAZCW", :by nil, :at 1505501650560
          :data {
           "T" {:type :leaf, :id "rkrs0-stcZ", :text "[]", :by "root", :at 1505501650560}
-          "j" {:type :leaf, :id "Bk8jAWjt5W", :text "respo.macros", :by "root", :at 1505501650560}
+          "j" {:type :leaf, :id "Bk8jAWjt5W", :text "respo.core", :by "root", :at 1540917127421}
           "r" {:type :leaf, :id "rkDj0ZoKcW", :text ":refer", :by "root", :at 1505501650560}
           "v" {
            :type :expr, :id "BkujCbiFcW", :by nil, :at 1505501650560
@@ -638,7 +638,7 @@
          :type :expr, :id "S1xmw6Rb0W", :by nil, :at 1505501650560
          :data {
           "T" {:type :leaf, :id "S1ptlo0Zjtqb", :text "[]", :by "root", :at 1505501650560}
-          "j" {:type :leaf, :id "HJRYlsRZjYcb", :text "respo.macros", :by "root", :at 1505501650560}
+          "j" {:type :leaf, :id "HJRYlsRZjYcb", :text "respo.core", :by "root", :at 1540917135385}
           "r" {:type :leaf, :id "Skk9xo0-it9-", :text ":refer", :by "root", :at 1505501650560}
           "v" {
            :type :expr, :id "rye9xjAWoFqb", :by nil, :at 1505501650560
@@ -2563,16 +2563,7 @@
     }
     :proc {
      :type :expr, :id "HJqkri0Zjt5b", :by nil, :at 1505501650560
-     :data {
-      "T" {
-       :type :expr, :id "rko1SoR-jFqW", :by nil, :at 1505501650560
-       :data {
-        "T" {:type :leaf, :id "Sk2JBiR-oF9-", :text "set!", :by "root", :at 1505501650560}
-        "j" {:type :leaf, :id "HJ6JBoRZiK5-", :text "js/window.onload", :by "root", :at 1505501650560}
-        "r" {:type :leaf, :id "rJCJrs0WjK5Z", :text "main!", :by "root", :at 1505501650560}
-       }
-      }
-     }
+     :data {}
     }
    }
    "respo-value.render" {
@@ -2758,7 +2749,6 @@
                 :type :expr, :id "S1c4goRbsYqb", :by nil, :at 1505501650560
                 :data {
                  "T" {:type :leaf, :id "r1o4esCbjFq-", :text "[]", :by "root", :at 1505501650560}
-                 "r" {:type :leaf, :id "Hk6EljCWiF9Z", :text "|/lib.js", :by "root", :at 1515688518265}
                  "v" {:type :leaf, :id "Hk0VgiRWsYc-", :text "|/main.js", :by "root", :at 1515688519626}
                 }
                }
@@ -3828,5 +3818,9 @@
   "root" {:id "root", :name "root", :nickname "root", :password "d41d8cd98f00b204e9800998ecf8427e", :avatar nil, :theme :star-trail}
  }
  :saved-files {}
- :configs {:storage-key "coir.edn", :extension ".cljs", :output "src", :port 6001}
+ :configs {:storage-key "calcit.edn", :extension ".cljs", :output "src", :port 6001}
+ :repl {
+  :alive? false
+  :logs {}
+ }
 }

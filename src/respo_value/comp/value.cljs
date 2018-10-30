@@ -4,7 +4,7 @@
             [respo-value.style.widget :as widget]
             [respo-value.style.layout :as layout]
             [respo-value.style.decoration :as decoration]
-            [respo.macros :refer [defcomp cursor-> <> div span list->]]))
+            [respo.core :refer [defcomp cursor-> <> div span list->]]))
 
 (declare comp-map)
 

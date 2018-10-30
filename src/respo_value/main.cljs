@@ -25,5 +25,3 @@
   (add-watch *store :rerender (fn [] (render-app! render!))))
 
 (defn reload! [] (clear-cache!) (render-app! render!) (println "Code updated."))
-
-(set! js/window.onload main!)

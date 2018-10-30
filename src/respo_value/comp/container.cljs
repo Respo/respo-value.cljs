@@ -5,7 +5,7 @@
             [respo-value.schema :as schema]
             [respo.comp.space :refer [=<]]
             [respo.comp.inspect :refer [comp-inspect]]
-            [respo.macros :refer [defcomp cursor-> <> div span list->]]
+            [respo.core :refer [defcomp cursor-> <> div span list->]]
             [respo-value.style.layout :as layout]
             [respo-value.style.widget :as widget]))
 
