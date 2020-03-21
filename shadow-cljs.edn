@@ -1,21 +1,34 @@
-
-{:source-paths ["src"]
- :dependencies [[mvc-works/hsl          "0.1.2"]
-                [mvc-works/shell-page   "0.1.9"]
-                [respo                  "0.9.0"]]
- :open-file-command ["subl" ["%s:%s:%s" :file :line :column]]
- :builds {:browser {:target :browser
-                    :output-dir "target/"
-                    :asset-path "./"
-                    :modules {:main {:init-fn respo-value.main/main!}}
-                    :devtools {:after-load respo-value.main/reload!
-                               :http-root "target"
-                               :http-port 7000
-                               :loader-mode :eval}
-                    :release {:output-dir "dist/"
-                              :module-hash-names 8
-                              :build-options {:manifest-name "assets.edn"}}}
-          :ssr {:target :node-script
-                :output-to "target/ssr.js"
-                :main respo-value.render/main!
-                :devtools {:after-load respo-value.render/main!}}}}
+{
+  :source-paths ["src" "cli"]
+  :cache-blockers #{cumulo-util.build}
+  :dependencies [
+    [cumulo/util "0.1.10"]
+    [mvc-works/hsl "0.1.2"]
+    [mvc-works/shell-page "0.1.10"]
+    [respo "0.12.0-a1"]
+    [org.clojure/core.incubator "0.1.4"]
+  ]
+  :open-file-command [
+    "subl"
+    ["%s:%s:%s" :file :line :column]
+  ]
+  :dev-http {7000 "target/"}
+  :builds {
+    :client {
+      :target :browser, :output-dir "target/", :asset-path "./"
+      :modules {
+        :client {:init-fn respo-value.main/main!}
+      }
+      :devtools {:after-load respo-value.main/reload!}
+      :compiler-options {:infer-externs :auto}
+      :release {
+        :output-dir "dist/", :module-hash-names 8
+        :build-options {:manifest-name "assets.edn"}
+      }
+    }
+    :page {
+      :target :node-script, :output-to "target/page.js", :main respo-value.page/main!
+      :devtools {:after-load respo-value.render/main!}
+    }
+  }
+}

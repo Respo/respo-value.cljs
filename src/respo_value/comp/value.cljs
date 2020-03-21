@@ -4,7 +4,7 @@
             [respo-value.style.widget :as widget]
             [respo-value.style.layout :as layout]
             [respo-value.style.decoration :as decoration]
-            [respo.core :refer [defcomp cursor-> <> div span list->]]))
+            [respo.core :refer [defcomp <> div span list-> >>]]))
 
 (declare comp-map)
 
@@ -32,9 +32,7 @@
 
 (defcomp comp-string (x) (<> span (pr-str x) widget/literal))
 
-(defn toggle-folding [folded?] (fn [e d! m!] (m! (not folded?))))
-
-(defn render-fields [states %cursor xs level]
+(defn render-fields [states xs level]
   (list->
    :div
    {:style (merge widget/style-children layout/column)}
@@ -45,29 +43,32 @@
             (div
              {:style layout/row}
              (comp-value states (first field) 0)
-             (cursor-> index comp-value states (last field) (inc level)))])))))
+             (comp-value (>> states index) (last field) (inc level)))])))))
 
-(defn render-children [states %cursor xs level]
+(defn render-children [states xs level]
   (list->
    :div
    {:style (merge widget/style-children layout/column)}
    (->> xs
         (map-indexed
-         (fn [index child] [index (cursor-> index comp-value states child (inc level))])))))
+         (fn [index child] [index (comp-value (>> states index) child (inc level))])))))
 
 (defcomp
  comp-vector
  (states x level)
- (let [folded? (if (some? (:data states)) (:data states) (> level 1))]
+ (let [cursor (:cursor states)
+       state (or (:data states) {:folded? (>= level 1)})
+       folded? (:folded? state)]
    (if (and folded? (not (empty? x)))
      (div
       {:style (merge widget/structure decoration/folded),
-       :on-click (toggle-folding folded?)}
+       :on-click (fn [e d!] (d! cursor (update state :folded? not)))}
       (<> span (str "[]~" (count x)) widget/only-text))
      (div
-      {:style (merge widget/structure layout/row), :on-click (toggle-folding folded?)}
+      {:style (merge widget/structure layout/row),
+       :on-click (fn [e d!] (d! cursor (update state :folded? not)))}
       (<> span (str "[]") widget/only-text)
-      (render-children states %cursor x level)))))
+      (render-children states x level)))))
 
 (defcomp
  comp-value
@@ -90,41 +91,50 @@
 (defcomp
  comp-set
  (states x level)
- (let [folded? (if (some? (:data states)) (:data states) (>= level 1))]
+ (let [cursor (:cursor states)
+       state (or (:data states) {:folded? (>= level 1)})
+       folded? (:folded? state)]
    (if (and folded? (not (empty? x)))
      (div
       {:style (merge widget/structure decoration/folded),
-       :on-click (toggle-folding folded?)}
+       :on-click (fn [e d!] (d! cursor (update state :folded? not)))}
       (<> span (str "#{}~" (count x)) widget/only-text))
      (div
-      {:style (merge widget/structure layout/row), :on-click (toggle-folding folded?)}
+      {:style (merge widget/structure layout/row),
+       :on-click (fn [e d!] (d! cursor (update state :folded? not)))}
       (<> span (str "#{}") widget/only-text)
-      (render-children states %cursor x level)))))
+      (render-children states x level)))))
 
 (defcomp
  comp-map
  (states x level)
- (let [folded? (if (some? (:data states)) (:data states) (>= level 1))]
+ (let [cursor (:cursor states)
+       state (or (:data states) {:folded? (>= level 1)})
+       folded? (:folded? state)]
    (if (and folded? (not (empty? x)))
      (div
       {:style (merge widget/structure decoration/folded),
-       :on-click (toggle-folding folded?)}
+       :on-click (fn [e d!] (d! cursor (update state :folded? not)))}
       (<> span (str "{}~" (count x)) widget/only-text))
      (div
-      {:style (merge widget/structure layout/row), :on-click (toggle-folding folded?)}
+      {:style (merge widget/structure layout/row),
+       :on-click (fn [e d!] (d! cursor (update state :folded? not)))}
       (<> span "{}" widget/only-text)
-      (render-fields states %cursor x level)))))
+      (render-fields states x level)))))
 
 (defcomp
  comp-list
  (states x level)
- (let [folded? (if (some? (:data states)) (:data states) (>= level 1))]
+ (let [cursor (:cursor states)
+       state (or (:data states) {:folded? (>= level 1)})
+       folded? (:folded? state)]
    (if (and folded? (not (empty? x)))
      (div
       {:style (merge widget/structure decoration/folded),
-       :on-click (toggle-folding folded?)}
+       :on-click (fn [e d!] (d! cursor (update state :folded? not)))}
       (<> span (str "'()~" (count x)) widget/only-text))
      (div
-      {:style (merge widget/structure layout/row), :on-click (toggle-folding folded?)}
+      {:style (merge widget/structure layout/row),
+       :on-click (fn [e d!] (d! cursor (update state :folded? not)))}
       (<> span (str "'()") widget/only-text)
-      (render-children states %cursor x level)))))
+      (render-children states x level)))))

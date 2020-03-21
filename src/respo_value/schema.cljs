@@ -25,4 +25,4 @@
 
 (def a-vector [1 2 3])
 
-(def store {})
+(def store {:states {}, :cursor []})
