@@ -1,0 +1,6 @@
+{:version "0.3.0-a1"
+ :group-id "respo"
+ :artifact-id "value"
+ :skip-tag true
+ :description "Respo value component"
+ :scm-url "https://github.com/Respo/value"}

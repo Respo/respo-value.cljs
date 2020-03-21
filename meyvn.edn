@@ -1,9 +1,0 @@
-
-{:pom {:group-id "respo",
-       :artifact-id "value",
-       :version "0.2.5",
-       :name "Respo value component"}
- :packaging {:jar {:enabled true
-                   :remote-repository {:id "clojars"
-                                       :url "https://clojars.org/repo"}}}
- :scm {:enabled true}}

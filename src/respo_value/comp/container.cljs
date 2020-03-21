@@ -5,7 +5,7 @@
             [respo-value.schema :as schema]
             [respo.comp.space :refer [=<]]
             [respo.comp.inspect :refer [comp-inspect]]
-            [respo.core :refer [defcomp cursor-> <> div span list->]]
+            [respo.core :refer [defcomp <> div span list-> >>]]
             [respo-value.style.layout :as layout]
             [respo-value.style.widget :as widget]))
 
@@ -19,7 +19,7 @@
  (div
   {:style style-section}
   (span {:inner-text hint, :style widget/style-hint})
-  (div {:style style-value} (cursor-> hint comp-value states value 0))))
+  (div {:style style-value} (comp-value states value 0))))
 
 (def data-table
   [["a nil:" nil]
@@ -48,5 +48,6 @@
      :div
      {}
      (->> data-table
-          (map-indexed (fn [idx pair] [idx (comp-section states (first pair) (last pair))]))))
+          (map-indexed
+           (fn [idx pair] [idx (comp-section (>> states idx) (first pair) (last pair))]))))
     (comp-inspect "States" states nil))))
